@@ -17,16 +17,18 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from store.views import index, product_detail, add_to_card
+from store.views import index, product_detail, add_to_card, cart, delete_cart
 from accounts.views import signup, logout_user, login_user
 from shop import settings
 
 urlpatterns = [
-    path('', index, name='index'),
+    path('', index, name='index'), # Index
     path('admin/', admin.site.urls),
-    path('signup/', signup, name='signup'),
-    path('login/', login_user, name='login'),
-    path('logout/', logout_user, name='logout'),
-    path('product/<str:slug>/', product_detail, name="product"),
-    path('product/<str:slug>/add-to-card/', add_to_card, name="add-to-card"),
+    path('signup/', signup, name='signup'), # S'inscrire
+    path('login/', login_user, name='login'), # Se connecter
+    path('logout/', logout_user, name='logout'), # Se déconnecter
+    path('cart/', cart, name='cart'), # Afficher les produits
+    path('cart/delete/', delete_cart, name='delete-cart'), # Supprimer le panier
+    path('product/<str:slug>/', product_detail, name="product"), # Ajouter les détails des produits
+    path('product/<str:slug>/add-to-card/', add_to_card, name="add-to-card"),  # Ajouter les produits dans le panier
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

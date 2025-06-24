@@ -20,6 +20,16 @@
 {% endif %}
 
 
+{% if user.card %}
+<p>
+    <a href="{% url 'cart' %}">Voir panier {{ user.card.orders.count }}</a>
+</p>
+
+{% endif %}
+<p>
+    <a href="{% url 'delete-cart' %}">Supprimer le panier</a>
+</p>
+
 {% block content %}
 {% endblock  %}
 

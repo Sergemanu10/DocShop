@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 from django.urls import reverse
+from django.utils import timezone
 
 from shop.settings import AUTH_USER_MODEL
 
@@ -43,9 +44,10 @@ class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     ordered = models.BooleanField(default=False)
+    ordered_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.product.name} ({self.quantity})"
+        return f"{self.product.name} ({self.quantity})"  # Afficher le nom et la quantité du produit
 
 
 # Panier (Cart)
@@ -58,8 +60,17 @@ class Order(models.Model):
 class Card(models.Model):
     user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
     orders = models.ManyToManyField(Order)
-    ordered = models.BooleanField(default=False)
-    ordered_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return self.user.username
+        return self.user.username  # Afficher l'user
+
+
+# Détacher les produits du panier
+    def delete(self, *args, **kwargs):
+        for order in self.orders.all():
+            order.ordered = True
+            order.ordered_date = timezone.now()
+            order.save()
+
+            self.orders.clear()
+        super().delete(*args, **kwargs)
